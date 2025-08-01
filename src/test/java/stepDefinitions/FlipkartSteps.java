@@ -12,12 +12,25 @@ public class FlipkartSteps {
     WebDriver driver;
     FlipkartLoginPage loginPage;
 
-    @Given("user is on Flipkart homepage")
+     @Given("user is on Flipkart homepage")
     public void user_is_on_flipkart_homepage() {
-        driver = new ChromeDriver();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        driver.get("https://www.flipkart.com/");
-        loginPage = new FlipkartLoginPage(driver);
+         ChromeOptions options = new ChromeOptions();
+   	 options.addArguments("--headless=new");
+   	 options.addArguments("--no-sandbox");
+   	 options.addArguments("--disable-dev-shm-usage");
+   	 options.addArguments("--disable-gpu");
+   	 options.addArguments("--remote-debugging-port=9222");
+
+	 try {
+        	Path tempProfileDir = Files.createTempDirectory("chrome-profile");
+        	options.addArguments("--user-data-dir=" + tempProfileDir.toAbsolutePath().toString());
+    } 	   catch (IOException e) {
+              throw new RuntimeException("Failed to create temporary user data directory", e);
+    }
+   	 driver = new ChromeDriver(options);
+   	 driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+   	 driver.get("https://www.flipkart.com/");
+   	 loginPage = new FlipkartLoginPage(driver);
     }
 
     @When("user closes the login popup")
